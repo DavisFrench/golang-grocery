@@ -3,6 +3,7 @@ package db
 import (
 	"errors"
 	"regexp"
+	"strings"
 
 	gg "DavisFrench/golang-grocery"
 )
@@ -32,6 +33,20 @@ func verifyProduceCodeFormat(produceCode string) (bool, error) {
 	return regexp.MatchString(PRODUCECODE_REGEX, produceCode)
 }
 
+// return index of Produce based by matching on produceId
+// returns -1 if not found
+func (gs *GroceryService) getIndexFromProduceCode(produceCode string) int {
+
+	for i, produce := range gs.inventory {
+		// case insensitivity
+		if strings.ToLower(produce.ProduceCode) == strings.ToLower(produceCode) {
+			return i
+		}
+	}
+
+	return -1
+}
+
 func (gs *GroceryService) AddProduce(produce gg.Produce) error {
 
 	// validate the format of the produce
@@ -52,13 +67,12 @@ func (gs *GroceryService) DeleteProduce(produceCode string) error {
 		return errors.New(PRODUCECODE_FORMAT_ERROR)
 	}
 
-	for i, produce := range gs.inventory {
-		if produce.ProduceCode == produceCode {
-			if i == len(gs.inventory) {
-				gs.inventory = gs.inventory[:i]
-			} else {
-				gs.inventory = append(gs.inventory[:i], gs.inventory[i+1:]...)
-			}
+	index := gs.getIndexFromProduceCode(produceCode)
+	if index != -1 {
+		if index == len(gs.inventory)-1 {
+			gs.inventory = gs.inventory[:index]
+		} else {
+			gs.inventory = append(gs.inventory[:index], gs.inventory[index+1:]...)
 		}
 	}
 
@@ -66,8 +80,6 @@ func (gs *GroceryService) DeleteProduce(produceCode string) error {
 }
 
 func (gs *GroceryService) GetProduceByCode(produceCode string) (*gg.Produce, error) {
-
-	// TODO: add case insensitivity for any this and the delete
 
 	// validate produceCode format
 	valid, err := verifyProduceCodeFormat(produceCode)
@@ -79,10 +91,9 @@ func (gs *GroceryService) GetProduceByCode(produceCode string) (*gg.Produce, err
 		return nil, errors.New(PRODUCECODE_FORMAT_ERROR)
 	}
 
-	for _, produce := range gs.inventory {
-		if produce.ProduceCode == produceCode {
-			return &produce, nil
-		}
+	index := gs.getIndexFromProduceCode(produceCode)
+	if index != -1 {
+		return &gs.inventory[index], nil
 	}
 
 	return nil, nil
