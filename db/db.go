@@ -12,7 +12,7 @@ import (
 var _ gg.GroceryService = &GroceryService{}
 
 const (
-	PRODUCECODE_REGEX = `^[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}$`
+	PRODUCECODE_REGEX        = `^[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}$`
 	PRODUCECODE_FORMAT_ERROR = "The produce_id should be in the following format: xxxx-xxxx-xxxx-xxxx, where x is an alphanumeric character and case insensitive"
 )
 
@@ -50,8 +50,24 @@ func (gs *GroceryService) getIndexFromProduceCode(produceCode string) int {
 func (gs *GroceryService) AddProduce(produce gg.Produce) error {
 
 	// validate the format of the produce
+	valid, err := verifyProduceCodeFormat(produce.ProduceCode)
+	if err != nil {
+		return err
+	}
 
-	gs.inventory = append(gs.inventory, produce)
+	if !valid {
+		return errors.New(PRODUCECODE_FORMAT_ERROR)
+	}
+
+	if index := gs.getIndexFromProduceCode(produce.ProduceCode); index == -1 {
+
+		// decimal place check
+
+		gs.inventory = append(gs.inventory, produce)
+
+	}
+
+	// return error if already inserted (use an else)
 	return nil
 }
 
@@ -59,7 +75,7 @@ func (gs *GroceryService) DeleteProduce(produceCode string) error {
 
 	// validate produceCode format
 	valid, err := verifyProduceCodeFormat(produceCode)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
@@ -83,7 +99,7 @@ func (gs *GroceryService) GetProduceByCode(produceCode string) (*gg.Produce, err
 
 	// validate produceCode format
 	valid, err := verifyProduceCodeFormat(produceCode)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
