@@ -3,13 +3,16 @@ Small golang api for a grocery store's inventory
 
 ## Run code
 Clone the repo and cd into the root.
+
 ### cli
-`go run cmd/api/main.go`
+`go run cmd/app/main.go`
+
 ### Dockerimage
 ```
 go build -t <tag> -f Dockerfile .
 // -p is used to bind docker port to localhost port
 go run -p 8888:8888 <tag>
+```
 
 ## CURL Commands
 Once the api is running you can try a few curl comands in a separate terminal
