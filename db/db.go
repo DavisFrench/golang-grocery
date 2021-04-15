@@ -18,6 +18,7 @@ type GroceryService struct {
 func NewGroceryService() *GroceryService {
 
 	return &GroceryService{
+		// initiate the grocery service with the appropriate inventory
 		inventory: gg.InitialInventory,
 	}
 }
@@ -38,6 +39,7 @@ func (gs *GroceryService) getIndexFromProduceCode(produceCode string) int {
 
 func (gs *GroceryService) AddProduce(produce gg.Produce) error {
 
+	// add produce if Produce code is not already found to be in inventory
 	if index := gs.getIndexFromProduceCode(produce.ProduceCode); index == -1 {
 
 		// decimal place check
@@ -75,6 +77,7 @@ func (gs *GroceryService) GetProduceByCode(produceCode string) (*gg.Produce, err
 	return nil, nil
 }
 
+// the error here is simply in the event that an actual db is ever implemented
 func (gs *GroceryService) GetAllProduce() ([]gg.Produce, error) {
 	return gs.inventory, nil
 }

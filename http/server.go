@@ -16,7 +16,11 @@ import (
 
 const (
 	PRODUCECODE_FORMAT_ERROR = "Improperly formatted produce_code!\nPlease follow the format xxxx-xxxx-xxxx-xxxx, where x is an alphanumeric character"
-	PRODUCECODE_REGEX        = `^[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}$`
+	// the [a-zA-Z\d] can be any case insensitive letter or a digit, the {4} that follows indicates that there should be 4 of those characters in a row
+	// the - is just the literal character "-" and it should follow those previous 4 characters.
+	// the ^ indicates that the start of a newline needs to start with something that matches that pattern
+	// the $ indicates that the string needs to end in the pattern
+	PRODUCECODE_REGEX = `^[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}$`
 )
 
 type Server struct {
@@ -36,6 +40,7 @@ func NewServer(groceryService gg.GroceryService) *Server {
 	}
 }
 
+// regex used to verify the format of a produce code
 func verifyProduceCodeFormat(produceCode string) (bool, error) {
 	return regexp.MatchString(PRODUCECODE_REGEX, produceCode)
 }
@@ -102,6 +107,7 @@ func (s *Server) getAllProduce(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) getProduceByProduceCode(w http.ResponseWriter, r *http.Request) {
 
+	// grab the produceCode and validate its format before executing the query against the database
 	produceCode := chi.URLParam(r, "produceCode")
 	valid, err := verifyProduceCodeFormat(produceCode)
 	if err != nil {
@@ -136,6 +142,7 @@ func (s *Server) getProduceByProduceCode(w http.ResponseWriter, r *http.Request)
 
 func (s *Server) deleteProduce(w http.ResponseWriter, r *http.Request) {
 
+	// grab the produceCode and validate its format before executing the query against the database
 	produceCode := chi.URLParam(r, "produceCode")
 	valid, err := verifyProduceCodeFormat(produceCode)
 	if err != nil {
@@ -161,6 +168,7 @@ func (s *Server) deleteProduce(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) addProduce(w http.ResponseWriter, r *http.Request) {
 
+	// grab the post body and unmarshal it into json struct
 	var produce []gg.Produce
 	if err := json.NewDecoder(r.Body).Decode(&produce); err != nil {
 		log.Println(err)
@@ -169,6 +177,7 @@ func (s *Server) addProduce(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, item := range produce {
+		// grab the produceCode and validate its format before executing the query against the database
 		valid, err := verifyProduceCodeFormat(item.ProduceCode)
 		if err != nil {
 			log.Println(err)

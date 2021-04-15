@@ -6,8 +6,9 @@ import (
 	gg "DavisFrench/golang-grocery"
 )
 
-// API checks that the produce_code is in the proper format
+// API checks that the produce_code is in the proper format, so there is no need to test it here
 func Test_GetProduceByProduceCode(t *testing.T) {
+	// define the inputs and expected results for each test case
 	tests := []struct {
 		name           string
 		input          string
@@ -28,6 +29,7 @@ func Test_GetProduceByProduceCode(t *testing.T) {
 		},
 	}
 
+	// iterate through the test cases
 	for _, test := range tests {
 
 		// can insert a custom inventory if needed
