@@ -6,6 +6,7 @@ type Produce struct {
 	UnitPrice   float32 `json:"unit_price"`
 }
 
+// defines all the methods expected for anything implementing the GroceryService
 type GroceryService interface {
 	AddProduce(produce Produce) error
 	DeleteProduce(produceCode string) error
