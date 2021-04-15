@@ -1,8 +1,6 @@
 package db
 
 import (
-	"errors"
-	"regexp"
 	"strings"
 
 	gg "DavisFrench/golang-grocery"
@@ -10,11 +8,6 @@ import (
 
 // for better output when failing to implement the interface
 var _ gg.GroceryService = &GroceryService{}
-
-const (
-	PRODUCECODE_REGEX        = `^[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}-[a-zA-Z\d]{4}$`
-	PRODUCECODE_FORMAT_ERROR = "The produce_id should be in the following format: xxxx-xxxx-xxxx-xxxx, where x is an alphanumeric character and case insensitive"
-)
 
 type GroceryService struct {
 	inventory []gg.Produce
@@ -27,10 +20,6 @@ func NewGroceryService() *GroceryService {
 	return &GroceryService{
 		inventory: inventory,
 	}
-}
-
-func verifyProduceCodeFormat(produceCode string) (bool, error) {
-	return regexp.MatchString(PRODUCECODE_REGEX, produceCode)
 }
 
 // return index of Produce based by matching on produceId
@@ -49,16 +38,6 @@ func (gs *GroceryService) getIndexFromProduceCode(produceCode string) int {
 
 func (gs *GroceryService) AddProduce(produce gg.Produce) error {
 
-	// validate the format of the produce
-	valid, err := verifyProduceCodeFormat(produce.ProduceCode)
-	if err != nil {
-		return err
-	}
-
-	if !valid {
-		return errors.New(PRODUCECODE_FORMAT_ERROR)
-	}
-
 	if index := gs.getIndexFromProduceCode(produce.ProduceCode); index == -1 {
 
 		// decimal place check
@@ -73,16 +52,6 @@ func (gs *GroceryService) AddProduce(produce gg.Produce) error {
 
 func (gs *GroceryService) DeleteProduce(produceCode string) error {
 
-	// validate produceCode format
-	valid, err := verifyProduceCodeFormat(produceCode)
-	if err != nil {
-		return err
-	}
-
-	if !valid {
-		return errors.New(PRODUCECODE_FORMAT_ERROR)
-	}
-
 	index := gs.getIndexFromProduceCode(produceCode)
 	if index != -1 {
 		if index == len(gs.inventory)-1 {
@@ -96,16 +65,6 @@ func (gs *GroceryService) DeleteProduce(produceCode string) error {
 }
 
 func (gs *GroceryService) GetProduceByCode(produceCode string) (*gg.Produce, error) {
-
-	// validate produceCode format
-	valid, err := verifyProduceCodeFormat(produceCode)
-	if err != nil {
-		return nil, err
-	}
-
-	if !valid {
-		return nil, errors.New(PRODUCECODE_FORMAT_ERROR)
-	}
 
 	index := gs.getIndexFromProduceCode(produceCode)
 	if index != -1 {
