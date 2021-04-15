@@ -15,10 +15,8 @@ type GroceryService struct {
 
 func NewGroceryService() *GroceryService {
 
-	var inventory []gg.Produce
-
 	return &GroceryService{
-		inventory: inventory,
+		inventory: gg.InitialInventory,
 	}
 }
 
