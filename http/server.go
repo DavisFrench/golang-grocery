@@ -6,6 +6,7 @@ import (
 	"net"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -160,24 +161,38 @@ func (s *Server) deleteProduce(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) addProduce(w http.ResponseWriter, r *http.Request) {
 
-	/*valid, err := verifyProduceCodeFormat(produceCode)
-	if err != nil {
+	var produce []gg.Produce
+	if err := json.NewDecoder(r.Body).Decode(&produce); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if !valid {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write(PRODUCECODE_FORMAT_ERROR)
-		return
+	for _, item := range produce {
+		valid, err := verifyProduceCodeFormat(item.ProduceCode)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if !valid {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(PRODUCECODE_FORMAT_ERROR))
+			return
+		}
+
+		if err := s.groceryService.AddProduce(item); err != nil {
+			if strings.Contains(err.Error(), item.ProduceCode) {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte(err.Error()))
+			} else {
+				log.Println(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+		} else {
+			w.Write([]byte("Produce Successfully added!"))
+		}
 	}
-
-	if err := s.groceryService.AddProduce(produceCode); err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}*/
-
-	w.Write([]byte("Produce Successfully added!"))
 }

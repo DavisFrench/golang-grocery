@@ -1,6 +1,8 @@
 package db
 
 import (
+	"errors"
+	"fmt"
 	"strings"
 
 	gg "DavisFrench/golang-grocery"
@@ -41,11 +43,12 @@ func (gs *GroceryService) AddProduce(produce gg.Produce) error {
 		// decimal place check
 
 		gs.inventory = append(gs.inventory, produce)
+		return nil
 
+	} else {
+		errMsg := fmt.Sprintf("Procuce code: %s, already in the inventory", produce.ProduceCode)
+		return errors.New(errMsg)
 	}
-
-	// return error if already inserted (use an else)
-	return nil
 }
 
 func (gs *GroceryService) DeleteProduce(produceCode string) error {
