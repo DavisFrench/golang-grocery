@@ -4,7 +4,7 @@ Small golang api for a grocery store's inventory
 ## Run code
 Clone the repo and cd into the root.
 Run the api with:
-`go run cmd/api/main.go`
+`go run cmd/app/main.go`
 
 Once the api is running you can try a few curl comands in a separate terminal
 
