@@ -1,5 +1,6 @@
 package db
 
+/*
 import (
 	"errors"
 	"fmt"
@@ -80,4 +81,4 @@ func (gs *GroceryService) GetProduceByCode(produceCode string) (*gg.Produce, err
 // the error here is simply in the event that an actual db is ever implemented
 func (gs *GroceryService) GetAllProduce() ([]gg.Produce, error) {
 	return gs.inventory, nil
-}
+}*/

@@ -15,8 +15,31 @@ type App struct {
 	groceryService gg.GroceryService
 }
 
+func envGet(key string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		log.Fatal("env not found")
+	}
+	return value
+}
+
+var (
+	host = envGet("PGHOST")
+	port = envGet("PGPORT")
+	user = envGet("PGUSER")
+	password = envGet("PGPASSWORD")
+	dbname = envGet("PGDATABASE")
+)
+
 func main() {
-	groceryService := db.NewGroceryService()
+
+	// groceryService := db.NewGroceryService()
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+	groceryService, err := db.NewPgService(psqlInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	app := App{
 		groceryService: groceryService,
