@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: pod-api
+  template:
+    metadata:
+      labels:
+        run: pod-api
+    spec:
+      containers:
+        - name: api
+          image: davisdavis27french/golang-grocery
+          ports: # not needed to access from another pod
+            - containerPort: 8888
