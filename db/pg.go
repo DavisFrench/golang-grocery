@@ -3,7 +3,6 @@ package db
 import (
 	gg "DavisFrench/golang-grocery"
 	"database/sql"
-
 	_ "github.com/lib/pq"
 )
 
@@ -23,6 +22,10 @@ func NewPgService(psqlInfo string) (*pgService, error) {
 
 func (pg *pgService) close() error {
 	return pg.db.Close()
+}
+
+func (pg *pgService) Ping() error {
+	return pg.db.Ping()
 }
 
 func (gs *pgService) AddProduce(produce gg.Produce) error {
@@ -50,6 +53,7 @@ func (pg *pgService) GetAllProduce() ([]gg.Produce, error) {
 		if err != nil {
 			return nil, err
 		}
+		inventory = append(inventory, produce)
 	}
 	err = rows.Err()
 	if err != nil {

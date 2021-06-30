@@ -86,14 +86,15 @@ func (s *Server) handlePing(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) getAllProduce(w http.ResponseWriter, r *http.Request) {
-
+	log.Println("endpoint")
 	all, err := s.groceryService.GetAllProduce()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
+	log.Println("past the get all produce function")
+	log.Println(all)
 	body, err := json.Marshal(all)
 	if err != nil {
 		log.Println(err)

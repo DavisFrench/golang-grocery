@@ -12,22 +12,22 @@ spec:
       labels:
         component: postgres
     spec:
+      volumes:
+        - name: postgres-storage # name of the volume that gets created
+          persistentVolumeClaim:
+            claimName: database-persistent-volume-claim # this refers to the name in the persistent volume claim
       containers:
         - name: postgres
           image: postgres
           ports:
             - containerPort: 5432 # default port
+          volumeMounts:
+            - name: postgres-storage # must match the volume name specified above
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
           env:
             - name: POSTGRES_PASSWORD # this has to be provided or container will crash
               valueFrom:
                 secretKeyRef: # secrets can be obtained implicitly by anyone who can create a pod
                   name: pgpassword # using generic on the command line indicates an opaque type, which just means arbitrary user defined data
                   key: PGPASSWORD
-            - name: PGUSER
-              value postgres
-            - name: PGHOST
-              value: postgres-cluster-ip-service
-            - name: PGPORT
-              value: '5432'
-            - name: PGDATABASE
-              value: grocery

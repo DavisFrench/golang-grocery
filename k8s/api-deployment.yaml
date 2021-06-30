@@ -17,3 +17,17 @@ spec:
           image: davisdavis27french/golang-grocery
           ports: # not needed to access from another pod
             - containerPort: 8888
+          env:
+            - name: PGPASSWORD # this has to be provided or container will crash
+              valueFrom:
+                secretKeyRef: # secrets can be obtained implicitly by anyone who can create a pod
+                  name: pgpassword # using generic on the command line indicates an opaque type, which just means arbitrary user defined data
+                  key: PGPASSWORD
+            - name: PGUSER
+              value: postgres
+            - name: PGHOST
+              value: postgres-cluster-ip-service
+            - name: PGPORT
+              value: '5432'
+            - name: PGDATABASE
+              value: postgres

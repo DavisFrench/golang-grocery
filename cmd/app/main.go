@@ -34,10 +34,16 @@ var (
 func main() {
 
 	// groceryService := db.NewGroceryService()
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+	// either should work
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
+	psqlInfo = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", user, password, host, port, dbname)
+
 	groceryService, err := db.NewPgService(psqlInfo)
 	if err != nil {
+		log.Fatal(err)
+	}
+	if err := groceryService.Ping(); err != nil {
 		log.Fatal(err)
 	}
 
